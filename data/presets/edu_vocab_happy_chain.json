@@ -1,0 +1,19 @@
+[
+  {
+    "title": "Happy vs Sad",
+    "slug": "happy-vs-sad",
+    "itemA": {
+      "label": "Happy",
+      "image": "/images/cards/happy.png",
+      "description": "Feeling or showing pleasure or contentment."
+    },
+    "itemB": {
+      "label": "Sad",
+      "image": "/images/cards/sad.png",
+      "description": "Feeling or showing sorrow or unhappiness."
+    },
+    "tags": ["emotion", "basic", "tier1"],
+    "concepts": ["happy", "sad"],
+    "insight": "Differentiates emotional states — useful for early vocabulary learning."
+  }
+]
