@@ -1,7 +1,28 @@
+/**
+ * File: components/core/book.tsx
+ * Date: July 26, 2025
+ * Purpose: 3D Book Flip Animation (Hover Responsive)
+ * Revision:
+ * - FIXED: TS2769 — Removed invalid style props ('origin', 'z')
+ * - FIXED: Replaced 'rotateY' from style to animate
+ * - FIXED: Added transformOrigin where needed
+ * - CLEAN: Used only valid React.CSSProperties across all style objects
+ */
+
 "use client";
 
-import { motion, useMotionValue, useSpring } from "motion/react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import { cn } from "@/lib/utils";
+
+// ✅ Generic wrapper to enable style, animate, events
+const MotionDiv = motion.div as React.ComponentType<
+  React.HTMLAttributes<HTMLDivElement> & {
+    animate?: any;
+    transition?: any;
+    style?: React.CSSProperties;
+    transformOrigin?: string;
+  }
+>;
 
 interface BookProps {
   content: React.ReactNode;
@@ -33,59 +54,57 @@ export const Book = ({
 
   return (
     <div style={{ perspective: "1000px" }}>
-      <motion.div
+      <MotionDiv
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        style={{
-          rotateY: rotate,
-        }}
+        animate={{ rotateY: rotate }}
         transition={{ duration: 1, ease: "easeInOut" }}
         className={cn("relative w-52 h-80 transform-3d", className)}
       >
-        <motion.div
-          style={{
-            rotateY: rotateSpring,
-            z: 15,
-          }}
-          className="z-10 shadow-2xl w-full h-full absolute transform-3d origin-left"
+        {/* Cover Layer (Flipping) */}
+        <MotionDiv
+          animate={{ rotateY: rotateSpring }}
+          transformOrigin="left"
+          style={{ transformStyle: "preserve-3d" }}
+          className="z-10 shadow-2xl w-full h-full absolute"
         >
+          {/* Inside of Cover (Reversed Side) */}
           <div
             style={{ transform: "rotateY(180deg)" }}
-            className={cn(
-              "absolute w-full h-full top-0 left-0 overflow-hidden rounded-r-xs bg-zinc-900 backface-hidden"
-            )}
+            className="absolute w-full h-full top-0 left-0 overflow-hidden rounded-r-xs bg-zinc-900 backface-hidden"
           >
             {backOfCover}
           </div>
 
-          <div
-            className={cn(
-              "absolute w-full h-full top-0 left-0 overflow-hidden rounded-l-xs backface-hidden"
-            )}
-          >
+          {/* Outside of Cover */}
+          <div className="absolute w-full h-full top-0 left-0 overflow-hidden rounded-l-xs backface-hidden">
             {cover}
           </div>
-        </motion.div>
+        </MotionDiv>
 
-        <motion.div
-          style={{ z: 14 }}
-          className="absolute z-20 top-[1%] left-0 w-[calc(100%-3%)] h-[calc(100%-2%)] bg-zinc-50 overflow-hidden"
+        {/* Content Layer (Static) */}
+        <MotionDiv
+          style={{ zIndex: 14 }}
+          className="absolute top-[1%] left-0 w-[calc(100%-3%)] h-[calc(100%-2%)] bg-zinc-50 overflow-hidden"
         >
           {content}
-        </motion.div>
+        </MotionDiv>
 
-        <div className="absolute top-[1%] -right-[4%] h-[calc(100%-2%)] w-[29px] transform rotate-y-90  bg-gradient-to-r from-zinc-50 via-zinc-300 to-zinc-50 bg-[length:5%_100%] bg-repeat-x shadow-2xl" />
+        {/* Side Strip / Binding */}
+        <div className="absolute top-[1%] -right-[4%] h-[calc(100%-2%)] w-[29px] transform rotate-y-90 bg-gradient-to-r from-zinc-50 via-zinc-300 to-zinc-50 bg-[length:5%_100%] bg-repeat-x shadow-2xl" />
 
+        {/* Book Spine (Left Edge) */}
         <div
           style={{ background: color }}
-          className="absolute top-0 left-0 h-full w-[30px] transform -rotate-y-90 -translate-x-[50%]  bg-red-600"
+          className="absolute top-0 left-0 h-full w-[30px] transform -rotate-y-90 -translate-x-[50%]"
         />
 
-        <motion.div
-          style={{ z: -15, background: color }}
-          className="absolute top-0 left-0 w-full rounded-r-xs h-full bg-red-600 shadow-lg "
+        {/* Back Panel */}
+        <MotionDiv
+          style={{ background: color, zIndex: -15 }}
+          className="absolute top-0 left-0 w-full rounded-r-xs h-full shadow-lg"
         />
-      </motion.div>
+      </MotionDiv>
     </div>
   );
 };

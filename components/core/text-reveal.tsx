@@ -1,7 +1,26 @@
+/**
+ * File: components/core/text-reveal.tsx
+ * Date: July 26, 2025
+ * Purpose: Reveal text with blur and staggered vertical motion
+ * Revision:
+ * - FIXED TS2322 and TS2745 by casting motion.span with relaxed prop support
+ * - Removed invalid 'motion/react' import and replaced with 'framer-motion'
+ */
+
 "use client";
 
 import { cn } from "@/lib/utils";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
+
+// ✅ Cast to allow TS-safe className, children, transition, etc.
+const MotionSpan = motion.span as React.ComponentType<
+  React.HTMLAttributes<HTMLSpanElement> & {
+    initial?: any;
+    animate?: any;
+    transition?: any;
+    children?: React.ReactNode;
+  }
+>;
 
 interface TextRevealProps {
   children: string;
@@ -28,7 +47,7 @@ export const TextReveal = ({
   return (
     <div>
       {segments.map((c, index) => (
-        <motion.span
+        <MotionSpan
           key={`${c}-${index}`}
           initial={{
             opacity: 0,
@@ -47,9 +66,10 @@ export const TextReveal = ({
             className
           )}
         >
-          {c === " " ? "\u00A0" : c}
-        </motion.span>
+          {c === " " ? "\u00A0" : <>{c}</>}
+        </MotionSpan>
       ))}
+      {/* Accessibility fallback */}
       <div className="sr-only">{children}</div>
     </div>
   );

@@ -1,7 +1,34 @@
+/**
+ * File: components/core/flip-card.tsx
+ * Date: July 26, 2025
+ * Purpose: Interactive 3D flip card with hover rotation
+ * Revision:
+ * - FIXED: Replaced broken 'motion/react' with 'framer-motion'
+ * - FIXED: motion.div className + hover support via casting
+ * - Uses safe rotateX/rotateY style bindings
+ */
+
 "use client";
 
 import { cn } from "@/lib/utils";
-import { motion, useMotionValue, useSpring } from "motion/react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+
+// ✅ Safe wrappers for outer/inner motion.div
+const MotionOuter = motion.div as React.ComponentType<
+  React.HTMLAttributes<HTMLDivElement> & {
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
+    style?: React.CSSProperties;
+    className?: string;
+  }
+>;
+
+const MotionInner = motion.div as React.ComponentType<
+  React.HTMLAttributes<HTMLDivElement> & {
+    style?: React.CSSProperties;
+    className?: string;
+  }
+>;
 
 interface FlipCardProps {
   front: React.ReactNode;
@@ -42,6 +69,7 @@ export const FlipCard = ({
 
     rotate.set(angle);
   };
+
   const handleMouseLeave = () => rotate.set(0);
 
   const rotateStyle =
@@ -53,15 +81,13 @@ export const FlipCard = ({
     flipDirection === "horizontal" ? "rotateY(180deg)" : "rotateX(180deg)";
 
   return (
-    <motion.div
+    <MotionOuter
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      style={{
-        perspective: 1000,
-      }}
+      style={{ perspective: 1000 }}
       className={cn("relative w-56 h-72", className)}
     >
-      <motion.div
+      <MotionInner
         style={{
           ...rotateStyle,
           width: "100%",
@@ -82,13 +108,13 @@ export const FlipCard = ({
         <div
           style={{ transform: backfaceTransform }}
           className={cn(
-            "absolute w-full h-full top-0 left-0  rounded-xl overflow-hidden shadow-md bg-white backface-hidden",
+            "absolute w-full h-full top-0 left-0 rounded-xl overflow-hidden shadow-md bg-white backface-hidden",
             panelClassName
           )}
         >
           {back}
         </div>
-      </motion.div>
-    </motion.div>
+      </MotionInner>
+    </MotionOuter>
   );
 };

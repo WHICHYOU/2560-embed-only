@@ -1,6 +1,27 @@
+/**
+ * File: components/core/text-circle.tsx
+ * Date: July 26, 2025
+ * Purpose: Animated circular rotating text using radial positioning
+ * Revision:
+ * - FIXED: Removed invalid import 'motion/react'
+ * - FIXED TS2322 issues via safe className + animate handling on motion.div
+ */
+
 "use client";
-import { motion } from "motion/react";
+
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+
+// ✅ Allow motion.div with correct props
+const MotionDiv = motion.div as React.ComponentType<
+  React.HTMLAttributes<HTMLDivElement> & {
+    animate?: any;
+    initial?: any;
+    transition?: any;
+    className?: string;
+    children?: React.ReactNode;
+  }
+>;
 
 interface TextCircleProps {
   text: string;
@@ -16,7 +37,7 @@ export const TextCircle = ({
   const letters = Array.from(text);
 
   return (
-    <motion.div
+    <MotionDiv
       initial={{ rotate: 0 }}
       animate={{ rotate: 360 }}
       transition={{
@@ -32,7 +53,6 @@ export const TextCircle = ({
     >
       {letters.map((letter, i) => {
         const angle = (360 / letters.length) * i;
-
         const factor = Number((Math.PI / letters.length).toFixed(0));
         const x = factor * i;
         const y = factor * i;
@@ -44,6 +64,6 @@ export const TextCircle = ({
           </span>
         );
       })}
-    </motion.div>
+    </MotionDiv>
   );
 };

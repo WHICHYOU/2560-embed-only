@@ -2,9 +2,17 @@
 
 import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
-
 import { cn } from "@/lib/utils";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
+
+// ✅ Safe version of motion.div with all expected props
+const MotionDiv = motion.div as React.ComponentType<
+  React.HTMLAttributes<HTMLDivElement> & {
+    layoutId?: string;
+    transition?: any;
+    children?: React.ReactNode;
+  }
+>;
 
 const Tabs = TabsPrimitive.Root;
 
@@ -30,7 +38,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "inline-flex h-10 w-full items-center justify-start border-b border-zinc-200 bg-transparent  dark:border-zinc-700",
+      "inline-flex h-10 w-full items-center justify-start border-b border-zinc-200 bg-transparent dark:border-zinc-700",
       className
     )}
     {...props}
@@ -73,7 +81,7 @@ const TabsTrigger = React.forwardRef<
       {...props}
     >
       {isActive && (
-        <motion.div
+        <MotionDiv
           className="absolute bottom-0 flex h-0.5 w-full justify-center"
           transition={{
             type: "spring",
@@ -89,7 +97,7 @@ const TabsTrigger = React.forwardRef<
               classNameIndicator
             )}
           />
-        </motion.div>
+        </MotionDiv>
       )}
       {children}
     </TabsPrimitive.Trigger>

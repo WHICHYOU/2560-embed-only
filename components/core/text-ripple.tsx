@@ -1,7 +1,32 @@
+/**
+ * File: components/core/text-ripple.tsx
+ * Date: July 26, 2025
+ * Purpose: Hover-reactive ripple animation on per-character basis
+ * Revision:
+ * - FIXED TS2745 by coercing motion.span children to valid ReactNode
+ * - FIXED TS2322 by casting MotionSpan safely for runtime animation object
+ 
+| Error                                        | Fix                                                               |
+| -------------------------------------------- | ----------------------------------------------------------------- |
+| `children` expects MotionValue or collection | ✅ Wrapped single char in `<>{char}</>` so it's JSX not raw string |
+| `animate={{ scaleY }}` not assignable        | ✅ Cast `MotionSpan` to loose `ComponentType` with `animate?: any` |
+| Hover handlers + className dropped           | ✅ Manually typed `React.HTMLAttributes<HTMLSpanElement>`          |
+ */
+
 "use client";
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+
 import { useState } from "react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+
+// ✅ Safe override to allow className, children, animate
+const MotionSpan = motion.span as React.ComponentType<
+  React.HTMLAttributes<HTMLSpanElement> & {
+    animate?: any;
+    variants?: any;
+    children?: React.ReactNode;
+  }
+>;
 
 interface TextRippleProps {
   children: string;
@@ -27,16 +52,17 @@ export const TextRipple = ({
 
   return (
     <div className={cn("relative font-bold text-2xl", className)}>
-      {chars.map((s, index) => (
-        <motion.span
+      {chars.map((char, index) => (
+        <MotionSpan
+          key={`${char}-${index}`}
           onMouseEnter={() => setHoveredIndex(index)}
           onMouseLeave={() => setHoveredIndex(null)}
           className="inline-block origin-bottom leading-[0.7]"
           animate={{ scaleY: getScaleY(index) }}
-          key={`${s}-${index}`}
         >
-          {s === " " ? "\u00A0" : s}
-        </motion.span>
+          {/* ✅ Coerce single char to valid JSX Node */}
+          {char === " " ? "\u00A0" : <>{char}</>}
+        </MotionSpan>
       ))}
     </div>
   );

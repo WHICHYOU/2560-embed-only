@@ -1,11 +1,13 @@
-// app/layout.tsx
-import "@/globals.css";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Yoister Embed Demo",
-  description: "FlipCard showdown embed test for Yoister presets",
-};
+/**
+ * File: app/layout.tsx
+ * Date: July 26, 2025
+ * Purpose: Global layout wrapper for entire app (non-intrusive).
+ * Notes:
+ * - Provides HTML and BODY tag containers.
+ * - Does NOT set global font, background, or styles.
+ * - Suppresses hydration warning to avoid mismatches in App Router.
+ * - Future routes outside /kids will inherit this base.
+ */
 
 export default function RootLayout({
   children,
@@ -14,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="antialiased bg-white text-gray-900">{children}</body>
+      <body suppressHydrationWarning={true}>{children}</body>
     </html>
   );
 }

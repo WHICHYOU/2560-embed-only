@@ -1,5 +1,15 @@
+/**
+ * File: components/core/checkbox.tsx
+ * Date: July 26, 2025
+ * Purpose: Custom animated checkbox using motion.path in SVG
+ * Revision:
+ * - FIXED: Replaced invalid import 'motion/react' with 'framer-motion'
+ * - Ensured animate and transition props are type-safe
+ */
+
 "use client";
-import { motion } from "motion/react";
+
+import { motion } from "framer-motion";
 
 interface CheckBoxProps {
   checked: boolean;

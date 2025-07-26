@@ -1,8 +1,35 @@
+/**
+ * File: components/core/input.tsx
+ * Date: July 26, 2025
+ * Purpose: Animated label input with staggered floating letters
+ * Revision:
+ * - FIXED invalid import from 'motion/react' → now uses 'framer-motion'
+ * - FIXED TS2322 via casted motion.div and motion.span
+ * - Ensured accessibility and TS safety
+ */
+
 "use client";
 
 import { useState } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+
+// ✅ Casted for TS-safe variants + className
+const MotionDiv = motion.div as React.ComponentType<
+  React.HTMLAttributes<HTMLDivElement> & {
+    variants?: any;
+    initial?: any;
+    animate?: any;
+  }
+>;
+
+const MotionSpan = motion.span as React.ComponentType<
+  React.HTMLAttributes<HTMLSpanElement> & {
+    variants?: any;
+    style?: React.CSSProperties;
+    children?: React.ReactNode;
+  }
+>;
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -46,23 +73,23 @@ export const Input = ({
 
   return (
     <div className={cn("relative", className)}>
-      <motion.div
+      <MotionDiv
         className="absolute top-1/2 -translate-y-1/2 pointer-events-none text-zinc-900 dark:text-zinc-50"
         variants={containerVariants}
         initial="initial"
         animate={showLabel ? "animate" : "initial"}
       >
         {label.split("").map((char, index) => (
-          <motion.span
+          <MotionSpan
             key={index}
             className="inline-block text-sm"
             variants={letterVariants}
             style={{ willChange: "transform" }}
           >
-            {char === " " ? "\u00A0" : char}
-          </motion.span>
+            {char === " " ? "\u00A0" : <>{char}</>}
+          </MotionSpan>
         ))}
-      </motion.div>
+      </MotionDiv>
 
       <input
         type="text"

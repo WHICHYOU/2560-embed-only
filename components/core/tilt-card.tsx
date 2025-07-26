@@ -1,8 +1,31 @@
 "use client";
 
+/**
+ * File: components/core/tilt-card.tsx
+ * Date: July 26, 2025
+ * Description: 3D Tilt Card with mouse tracking and depth parallax
+ * Revision Notes:
+ * - ✅ TS2322/TS2769: Resolved via forwardRef MotionDiv
+ * - ✅ Safe className, ref, style usage
+ * - ✅ MotionValue-style handling for translateZ, boxShadow
+ */
+
+import React, { forwardRef, useRef } from "react";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  MotionProps,
+} from "framer-motion";
 import { cn } from "@/lib/utils";
-import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
-import { useRef } from "react";
+
+// ✅ Safe MotionDiv (with ref + full props)
+const MotionDiv = motion(
+  forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement> & MotionProps>(
+    (props, ref) => <div ref={ref} {...props} />
+  )
+);
 
 interface TiltCardProps {
   range?: number;
@@ -17,7 +40,7 @@ export const TiltCard = ({
   containerClassName,
   children,
 }: TiltCardProps) => {
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -44,10 +67,7 @@ export const TiltCard = ({
     y.set(rotationY);
   };
 
-  const handleMouseEnter = () => {
-    z.set(depth);
-  };
-
+  const handleMouseEnter = () => z.set(depth);
   const handleMouseLeave = () => {
     x.set(0);
     y.set(0);
@@ -60,7 +80,7 @@ export const TiltCard = ({
   );
 
   return (
-    <motion.div
+    <MotionDiv
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
@@ -72,11 +92,11 @@ export const TiltCard = ({
       }}
       className="relative h-96 w-72 rounded-2xl bg-zinc-200 dark:bg-zinc-700 shadow-md border border-zinc-300 dark:border-zinc-600"
     >
-      <motion.div
+      <MotionDiv
         style={{
           transformStyle: "preserve-3d",
-          translateZ: zSpring,
-          boxShadow: shadow,
+          translateZ: zSpring as unknown as number,
+          boxShadow: shadow as unknown as string,
         }}
         className={cn(
           "absolute inset-4 rounded-xl bg-white overflow-hidden [transform-style:preserve-3d]",
@@ -84,7 +104,7 @@ export const TiltCard = ({
         )}
       >
         {children}
-      </motion.div>
-    </motion.div>
+      </MotionDiv>
+    </MotionDiv>
   );
 };

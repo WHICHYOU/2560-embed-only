@@ -1,14 +1,26 @@
 "use client";
+
 import React, { useState } from "react";
 import { ThemeSwitcher } from "./theme";
 import Link from "next/link";
 import { GitHubIcon } from "@/assets/icons/github";
 import { XIcon } from "@/assets/icons/x";
-
-import { AnimatePresence, motion } from "motion/react";
-import { SidebarMobile } from "./sidebar-mobile";
 import { X } from "lucide-react";
 import { Logo } from "@/assets/icons/logo";
+import { SidebarMobile } from "./sidebar-mobile";
+
+// ✅ FIXED: Import both AnimatePresence and motion correctly
+import { motion, AnimatePresence } from "framer-motion";
+
+// ✅ FIXED: Create a MotionDiv that accepts real JSX props (like className, onClick)
+const MotionDiv = motion.div as React.ComponentType<
+  React.HTMLAttributes<HTMLDivElement> & {
+    initial?: any;
+    animate?: any;
+    exit?: any;
+    transition?: any;
+  }
+>;
 
 const Header = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -17,19 +29,20 @@ const Header = () => {
 
   return (
     <>
+      {/* ✅ FIXED: AnimatePresence imported + MotionDiv accepts props */}
       <AnimatePresence>
         {sidebarOpen && (
-          <motion.div
+          <MotionDiv
             initial={{ opacity: 0 }}
-            exit={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="fixed inset-0 z-30 bg-black/50 md:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         )}
       </AnimatePresence>
 
-      <motion.div
+      <MotionDiv
         initial={{ x: "-100%" }}
         animate={{ x: sidebarOpen ? "0%" : "-100%" }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -42,7 +55,6 @@ const Header = () => {
               Berlix&nbsp;UI
             </span>
           </Link>
-
           <button
             onClick={() => setSidebarOpen(false)}
             className="text-zinc-900 dark:text-zinc-100"
@@ -51,22 +63,20 @@ const Header = () => {
           </button>
         </div>
         <SidebarMobile onClose={() => setSidebarOpen(false)} />
-      </motion.div>
+      </MotionDiv>
 
       <div className="w-full sticky top-0 z-20 bg-transparent backdrop-blur-lg border-b border-gray-200 dark:border-zinc-800">
         <header className="mx-auto max-w-[1536px] h-14 px-4 md:px-6 flex items-center justify-between">
           <div className="flex items-center gap-12">
             <div className="flex items-center gap-4">
-              {
-                <button
-                  onClick={toggleSidebar}
-                  className="flex flex-col items-start gap-1 md:hidden"
-                >
-                  <span className="w-5 h-0.5 bg-zinc-900 dark:bg-zinc-100 rounded-full" />
-                  <span className="w-3 h-0.5 bg-zinc-900 dark:bg-zinc-100 rounded-full" />
-                  <span className="w-4 h-0.5 bg-zinc-900 dark:bg-zinc-100 rounded-full" />
-                </button>
-              }
+              <button
+                onClick={toggleSidebar}
+                className="flex flex-col items-start gap-1 md:hidden"
+              >
+                <span className="w-5 h-0.5 bg-zinc-900 dark:bg-zinc-100 rounded-full" />
+                <span className="w-3 h-0.5 bg-zinc-900 dark:bg-zinc-100 rounded-full" />
+                <span className="w-4 h-0.5 bg-zinc-900 dark:bg-zinc-100 rounded-full" />
+              </button>
 
               <Link href="/" className="flex items-center gap-2">
                 <Logo className="size-6 fill-rose-500" />
@@ -75,7 +85,7 @@ const Header = () => {
                 </span>
               </Link>
             </div>
-            <nav className=" hidden md:flex items-center gap-6 text-sm font-medium text-zinc-800 dark:text-zinc-200">
+            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-zinc-800 dark:text-zinc-200">
               <Link
                 className="hover:text-zinc-900 dark:hover:text-zinc-50"
                 href="/docs"

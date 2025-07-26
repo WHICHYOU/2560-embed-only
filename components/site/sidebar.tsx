@@ -1,6 +1,6 @@
 "use client";
 import { ScrollArea } from "@/components/site/scroll-area";
-import { navigation } from "@/constants/navigation";
+import { navigation } from "../constants/navigation";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

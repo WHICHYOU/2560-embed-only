@@ -1,8 +1,24 @@
 "use client";
 
+/**
+ * File: components/core/text-split.tsx
+ * Date: July 26, 2025
+ * Description: Hover-animated split text effect per character
+ * Revision: ✅ Fixed framer-motion typing issues, supports className safely
+ */
+
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, MotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
+import React from "react";
+
+// ✅ Safely typed MotionSpan
+const MotionSpan = motion(
+  React.forwardRef<
+    HTMLSpanElement,
+    React.HTMLProps<HTMLSpanElement> & MotionProps
+  >((props, ref) => <span ref={ref} {...props} />)
+);
 
 interface TextSplitProps {
   children: string;
@@ -30,9 +46,7 @@ export const TextSplit = ({
   };
 
   return (
-    <div
-      className={cn("relative flex items-center justify-center ", className)}
-    >
+    <div className={cn("relative flex items-center justify-center", className)}>
       {children.split("").map((char, index) => {
         const offset = getOffset(index);
         const displayChar = char === " " ? "\u00A0" : char;
@@ -44,27 +58,23 @@ export const TextSplit = ({
             onMouseEnter={() => setHoverIndex(index)}
             onMouseLeave={() => setHoverIndex(null)}
           >
-            <motion.span
+            <MotionSpan
               initial={false}
-              animate={{
-                y: `-${offset}%`,
-              }}
+              animate={{ y: `-${offset}%` }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className={cn("overflow-hidden", topClassName)}
             >
               {displayChar}
-            </motion.span>
+            </MotionSpan>
 
-            <motion.span
+            <MotionSpan
               initial={false}
-              animate={{
-                y: `${offset}%`,
-              }}
+              animate={{ y: `${offset}%` }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className={cn("overflow-hidden", bottomClassName)}
             >
               <span className="block -translate-y-1/2">{displayChar}</span>
-            </motion.span>
+            </MotionSpan>
           </div>
         );
       })}

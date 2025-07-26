@@ -1,6 +1,24 @@
+/**
+ * File: components/core/gradient-bars.tsx
+ * Date: July 26, 2025
+ * Purpose: Animated background gradient bars with pulsating scale
+ * Revision:
+ * - FIXED: Replaced 'motion/react' with valid 'framer-motion'
+ * - FIXED: Casted motion.div to allow animate, style, and className safely
+ */
+
 "use client";
 
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
+
+// ✅ Safe cast to allow animate, style, transition, and className
+const MotionDiv = motion.div as React.ComponentType<
+  React.HTMLAttributes<HTMLDivElement> & {
+    animate?: any;
+    transition?: any;
+    style?: React.CSSProperties;
+  }
+>;
 
 interface GradientBarsProps {
   bars?: number;
@@ -12,6 +30,7 @@ export const GradientBars = ({
   colors = ["#8f0feb", "transparent"],
 }: GradientBarsProps) => {
   const gradientStyle = `linear-gradient(to top, ${colors.join(", ")})`;
+
   return (
     <div className="absolute inset-0 z-0 overflow-hidden">
       <div className="flex h-full w-full">
@@ -22,7 +41,7 @@ export const GradientBars = ({
           const scale = 0.3 + 0.7 * Math.pow(distance * 2, 1.2);
 
           return (
-            <motion.div
+            <MotionDiv
               key={`bg-bar-${index}`}
               className="flex-1 origin-bottom"
               style={{ background: gradientStyle }}
